@@ -4,6 +4,7 @@ pub struct SrcLoc {
     pub col: u32,
 }
 
+#[derive(Debug)]
 pub struct Error {
     pub loc: SrcLoc,
     pub msg: String,
