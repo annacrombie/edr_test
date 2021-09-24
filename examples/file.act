@@ -1,0 +1,11 @@
+# simulate file activity
+
+dir = "tmp/test"
+file = join dir "/hello"
+msg = "hello world!"
+
+file.create :dir dir
+file.create :file file
+file.modify file msg
+file.delete file
+file.delete dir

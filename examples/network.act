@@ -1,0 +1,6 @@
+# send a message over tcp and udp
+
+msg = "hello world!"
+
+network.transmit :udp "127.0.0.1:8080" msg
+network.transmit :tcp "127.0.0.1:8080" msg

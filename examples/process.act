@@ -1,0 +1,3 @@
+# print hello world
+
+process.spawn "printf" "hello %s" "world"
