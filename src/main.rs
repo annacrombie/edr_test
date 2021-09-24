@@ -45,7 +45,7 @@ fn parse_opts() -> Option<Result<Opts, String>> {
         .optflag(
             "c",
             "",
-            "execute script string (don't read from a file), \
+            "execute command line args as a script, \
             arguments are implicitly quoted",
         )
         .optflag("h", "", "show this message");
