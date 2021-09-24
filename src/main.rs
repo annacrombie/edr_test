@@ -1,24 +1,12 @@
-#[macro_use]
-extern crate lazy_static;
-extern crate getopts;
-
-mod activity;
-mod error;
-mod interpreter;
-mod logger;
-mod registry;
-mod script;
-
-use registry::Registry;
 use std::process::exit;
 
 static DEFAULT_LOG_FILE: &str = "activity.log";
 
-fn print_usage(program: &str, opts: getopts::Options, registry: &Registry) {
+fn print_usage(program: &str, opts: getopts::Options) {
     let brief = format!("Usage: {} [options] <script>", program);
     print!("{}", opts.usage(&brief));
     println!("\nRegistered functions:");
-    for e in registry.funcs() {
+    for e in edr_test::registry().funcs() {
         println!(
             "    {} {}",
             e.name,
@@ -41,7 +29,7 @@ struct Opts {
     log_file: String,
 }
 
-fn parse_opts(registry: &Registry) -> Option<Result<Opts, String>> {
+fn parse_opts() -> Option<Result<Opts, String>> {
     let args: Vec<String> = std::env::args().collect();
     let program = args[0].clone();
 
@@ -70,7 +58,7 @@ fn parse_opts(registry: &Registry) -> Option<Result<Opts, String>> {
     };
 
     if matches.opt_present("h") {
-        print_usage(&program, opts, registry);
+        print_usage(&program, opts);
         return None;
     }
 
@@ -97,7 +85,7 @@ fn parse_opts(registry: &Registry) -> Option<Result<Opts, String>> {
             .collect::<Vec<String>>()
             .join(" ")
     } else {
-        print_usage(&program, opts, registry);
+        print_usage(&program, opts);
         return None;
     };
 
@@ -108,24 +96,8 @@ fn parse_opts(registry: &Registry) -> Option<Result<Opts, String>> {
     }))
 }
 
-fn exec<R: std::io::Read>(src: R, registry: &registry::Registry) -> Result<(), error::Error> {
-    let ast = match script::parse(std::io::BufReader::new(src), &registry) {
-        Ok(ast) => ast,
-        Err(err) => {
-            return Err(err);
-        }
-    };
-
-    interpreter::interp(&ast)?;
-
-    Ok(())
-}
-
 fn main() {
-    let mut registry = Registry::default();
-    activity::register(&mut registry);
-
-    let opts = match parse_opts(&registry) {
+    let opts = match parse_opts() {
         Some(thing) => match thing {
             Ok(opts) => opts,
             Err(e) => {
@@ -138,15 +110,15 @@ fn main() {
         }
     };
 
-    logger::init(&opts.log_file);
+    edr_test::init(&opts.log_file);
 
     use std::fs::File;
 
     let res = if opts.script_is_source {
-        exec(opts.script.as_bytes(), &registry)
+        edr_test::exec(opts.script.as_bytes())
     } else {
         match File::open(&opts.script) {
-            Ok(f) => exec(f, &registry),
+            Ok(f) => edr_test::exec(f),
             Err(e) => {
                 eprintln!("{}", e);
                 exit(1);
