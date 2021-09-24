@@ -52,8 +52,8 @@ cargo build
 
 The `edr_test` binary should now be located at `target/debug/edr_test`.
 
-You may optionally run `cargo test` to run the tests.  Not all functionality has
-been tested due to time constraints.
+You may optionally run `cargo test -- --test-threads=1` to run the tests.  Not
+all functionality has been tested due to time constraints.
 
 # Usage
 
