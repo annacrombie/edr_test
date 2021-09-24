@@ -57,4 +57,19 @@ all functionality has been tested due to time constraints.
 
 # Usage
 
-See `edr_test -h`
+```
+# create a file
+$ edr_test -c file.create file test.txt
+
+# create a directory
+$ edr_test -c file.create dir test_dir
+
+# transmit data
+$ nc -l -p 8080&
+$ edr_test -c network.transmit tcp 127.0.0.1:8080 "hello world"
+
+# execute a file
+$ edr_test examples/file.act
+```
+
+For more info, and function reference, see `edr_test -h`
